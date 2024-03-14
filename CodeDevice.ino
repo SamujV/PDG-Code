@@ -73,6 +73,13 @@ float volt2;
 float volt3;
 float voltFinal;
 
+//extracción de medio
+
+int volta;
+int bombaB;
+int bombaC;
+
+
 //Bomba peristaltica
 const int pinControl1 = 18; // Pin de control 1
 const int pinControl2 = 19; // Pin de control 2
@@ -157,6 +164,10 @@ void setup() {
   volt3 = 0;
   ntu = 0;
   voltFinal = 0;
+
+  volta = 0;
+  bombaB = 0;
+  bombaC = 0;
 
   Serial.println("Setup----------------------- ");
   Wire.begin();
@@ -253,6 +264,39 @@ void loop() {
         //Serial.println("");
         break;
 
+
+      case 'L':
+
+        volta = 0;
+        bombaB = 0;
+        bombaC = 0;
+
+        volta = Serial.parseInt();
+
+        // extracción de medio
+        bombaB = (volta - 33.699) / 0.0059; // bomba b
+        Serial.print("Tiempo extracción bomba B: ");
+        Serial.print(bombaB);
+        Serial.println("s ");
+
+        encenderBomba2();
+        delay(bombaB);
+        apagarBomba2();
+
+
+
+        //ingreso de medio
+
+        bombaC = (volta -   3.1456) / 0.0059;   // bomba C
+        Serial.print("Tiempo ingreso bomba C: ");
+        Serial.println(bombaB);
+        Serial.println("s ");
+        encenderBomba2();
+        delay(bombaC);
+        apagarBomba2();
+
+
+        break;
 
       case 'M':
         /*
@@ -541,10 +585,10 @@ void loop() {
     Serial.println("");
 
 
- if (!ubidots.connected())
-  {
-    ubidots.reconnect();
-  }
+    if (!ubidots.connected())
+    {
+      ubidots.reconnect();
+    }
 
 
     ubidots.add(VARIABLE_CONC, concent); // Insert your variable Labels and the value to be sen
